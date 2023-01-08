@@ -1,0 +1,15 @@
+body {
+  padding: 10px;
+}
+
+#excel-icon {
+  color: #1d6f42;
+}
+
+#pdf-icon {
+  color: #f40f02;
+}
+
+.file-picker-button-icon {
+  font-size: 24px;
+}

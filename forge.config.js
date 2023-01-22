@@ -23,10 +23,13 @@ module.exports = {
     {
       name: '@electron-forge/publisher-github',
       config: {
-        owner: 'ScriptAndTonic',
-        name: 'pdf_generator',
+        repository: {
+          owner: 'ScriptAndTonic',
+          name: 'pdf_generator',
+        },
       },
       prerelease: true,
     },
   ],
+  github,
 };

@@ -31,4 +31,8 @@ module.exports = {
       prerelease: true,
     },
   ],
+  github_repository: {
+    owner: 'ScriptAndTonic',
+    name: 'pdf_generator',
+  },
 };

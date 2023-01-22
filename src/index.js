@@ -1,6 +1,5 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
-const { generate } = require('rxjs');
 
 const pdfGenerator = require('./pdf_generator/pdf_generator');
 

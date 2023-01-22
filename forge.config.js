@@ -31,5 +31,4 @@ module.exports = {
       prerelease: true,
     },
   ],
-  github,
 };

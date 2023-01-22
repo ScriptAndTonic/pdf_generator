@@ -19,4 +19,14 @@ module.exports = {
       config: {},
     },
   ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        owner: 'ScriptAndTonic',
+        name: 'pdf_generator',
+      },
+      prerelease: true,
+    },
+  ],
 };

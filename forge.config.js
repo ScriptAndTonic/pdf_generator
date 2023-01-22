@@ -4,10 +4,7 @@ module.exports = {
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {
-        exe: 'PDF Generator.exe',
-        name: 'PDF Generator',
-      },
+      config: {},
     },
     {
       name: '@electron-forge/maker-zip',

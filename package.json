@@ -2,7 +2,7 @@
   "name": "pdf_generator",
   "productName": "pdf_generator",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "",
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
@@ -31,9 +31,5 @@
     "@electron-forge/maker-zip": "^6.0.4",
     "@electron-forge/publisher-github": "^6.0.4",
     "electron": "22.0.0"
-  },
-  "github_repository": {
-    "owner": "ScriptAndTonic",
-    "name": "pdf_generator"
   }
 }

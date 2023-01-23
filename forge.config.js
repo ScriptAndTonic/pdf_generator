@@ -10,14 +10,6 @@ module.exports = {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
     },
-    {
-      name: '@electron-forge/maker-deb',
-      config: {},
-    },
-    {
-      name: '@electron-forge/maker-rpm',
-      config: {},
-    },
   ],
   publishers: [
     {
@@ -28,11 +20,6 @@ module.exports = {
           name: 'pdf_generator',
         },
       },
-      prerelease: true,
     },
   ],
-  github_repository: {
-    owner: 'ScriptAndTonic',
-    name: 'pdf_generator',
-  },
 };

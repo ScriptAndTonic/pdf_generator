@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 
-const pdfGenerator = require('./pdf_generator/pdf_generator');
+const pdfGenerator = require('./helpers/pdf_generator');
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -12,19 +12,19 @@ const createWindow = () => {
     width: 400,
     height: 500,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'mainPage/preload.js'),
     },
   });
-  ipcMain.handle('dialog:openDirectory', () => openDirectory(mainWindow));
-
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
-
   // mainWindow.webContents.openDevTools();
+
+  ipcMain.handle('dialog:openDirectory', (event) => openDirectory(event, mainWindow));
+  ipcMain.handle('openSettingsPage', (event) => openSettingsPage(event, mainWindow));
+  ipcMain.handle('generate-pdfs', generatePDFs);
+
+  mainWindow.loadFile(path.join(__dirname, 'mainPage/index.html'));
 };
 
 app.whenReady().then(() => {
-  ipcMain.on('generate-pdfs', generatePDFs);
-  // ipcMain.on('open-settings-page', openSettingsPage);
   createWindow();
 });
 
@@ -41,19 +41,16 @@ app.on('activate', () => {
 });
 
 // --- CUSTOM LOGIC STARTS HERE ---
-const generatePDFs = async (event, pdfTemplateFilePath, excelDataFilePath, outputDirectoryPath) => {
-  console.log('Main received');
-  console.dir(event);
-  console.log(pdfTemplateFilePath);
-  console.log(excelDataFilePath);
-  console.log(outputDirectoryPath);
+const generatePDFs = async (_event, pdfTemplateFilePath, excelDataFilePath, outputDirectoryPath) => {
+  console.log('Generate PDFs');
   console.log(`Template Path: ${pdfTemplateFilePath}`);
   console.log(`Data File Path: ${excelDataFilePath}`);
   console.log(`Output Directory Path: ${outputDirectoryPath}`);
   await pdfGenerator.generatePDFs(pdfTemplateFilePath, excelDataFilePath, outputDirectoryPath);
+  return 'Success';
 };
 
-const openDirectory = async (parentWindow) => {
+const openDirectory = async (_event, parentWindow) => {
   const { canceled, filePaths } = await dialog.showOpenDialog(parentWindow, {
     title: 'Save Folder',
     message: 'Choose a Folder to Save the generated PDFs',
@@ -67,12 +64,16 @@ const openDirectory = async (parentWindow) => {
   }
 };
 
-// const openSettingsPage = async (event) => {
-//   const mainWindow = new BrowserWindow({parent
-//     width: 400,
-//     height: 500,
-//     webPreferences: {
-//       preload: path.join(__dirname, 'preload.js'),
-//     },
-//   });
-// };
+const openSettingsPage = async (_event, mainWindow) => {
+  console.log('Open Settings Page');
+  const settingsWindow = new BrowserWindow({
+    parent: mainWindow,
+    width: 400,
+    height: 500,
+    webPreferences: {
+      preload: path.join(__dirname, 'settingsPage/settingsPreload.js'),
+    },
+  });
+  settingsWindow.webContents.openDevTools();
+  settingsWindow.loadFile(path.join(__dirname, 'settingsPage/settingsPage.html'));
+};

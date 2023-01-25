@@ -1,15 +1,6 @@
 const fs = require('fs');
 const { PDFDocument } = require('pdf-lib');
 const ExcelJS = require('exceljs');
-// const nodemailer = require('nodemailer');
-// const mailClient = nodemailer.createTransport({
-//   host: 'smtp.gmail.com',
-//   port: 465,
-//   auth: {
-//     user: process.env.GMAIL_USERNAME,
-//     pass: process.env.GMAIL_PASS,
-//   },
-// });
 
 exports.generatePDFs = async (templatePath, dataFilePath, outputPath) => {
   const inputWorksheet = await readXlsxFile(dataFilePath);
@@ -25,7 +16,6 @@ exports.generatePDFs = async (templatePath, dataFilePath, outputPath) => {
     });
     const outputFileName = `${outputPath}/${rowNumber}.pdf`;
     await fillPdf(templatePath, outputFileName, values);
-    // await sendEmail(email, 'Congratulations', outputFileName);
   });
 };
 
@@ -48,12 +38,3 @@ const readXlsxFile = async (filePath) => {
   const wb = await workbook.xlsx.readFile(filePath);
   return wb.worksheets[0];
 };
-
-// const sendEmail = async (emailAddress, subject, attachmentFilePath) => {
-//   await mailClient.sendMail({
-//     from: 'cristea.r.andrei@gmail.com',
-//     to: emailAddress,
-//     subject: subject,
-//     attachments: [{ path: attachmentFilePath }],
-//   });
-// };

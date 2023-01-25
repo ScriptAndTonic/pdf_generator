@@ -13,3 +13,11 @@ body {
 .file-picker-button-icon {
   font-size: 24px;
 }
+
+.footer-button {
+  width: 150px;
+}
+
+.file-cta {
+  width: 190px;
+}

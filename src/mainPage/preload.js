@@ -4,6 +4,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
   generatePDFs: (pdfTemplateFilePath, excelDataFilePath, outputDirectoryPath) =>
-    ipcRenderer.send('generate-pdfs', pdfTemplateFilePath, excelDataFilePath, outputDirectoryPath),
+    ipcRenderer.invoke('generate-pdfs', pdfTemplateFilePath, excelDataFilePath, outputDirectoryPath),
   selectFolder: (outputDirectoryPath) => ipcRenderer.invoke('dialog:openDirectory', outputDirectoryPath),
+  openSettingsPage: () => ipcRenderer.invoke('openSettingsPage'),
 });

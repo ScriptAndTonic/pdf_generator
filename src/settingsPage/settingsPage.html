@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self';" />
+    <title>Settings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+    <link rel="stylesheet" href="settingsPage.css" />
+  </head>
+  <body>
+    <form>
+      <div id="smtp-host-input-container" class="field">
+        <label class="label">SMTP Host</label>
+        <div class="control">
+          <input class="input" type="text" placeholder="smtp.gmail.com" required />
+        </div>
+      </div>
+
+      <div id="smtp-port-input-container" class="field">
+        <label class="label">SMTP Port</label>
+        <div class="control">
+          <input class="input" type="text" placeholder="465" required />
+        </div>
+      </div>
+
+      <div id="smtp-user-input-container" class="field">
+        <label class="label">Username</label>
+        <div class="control">
+          <input class="input" type="text" placeholder="your.name@company.com" required />
+        </div>
+      </div>
+
+      <div id="smtp-pass-input-container" class="field">
+        <label class="label">Password</label>
+        <div class="control">
+          <input class="input" type="password" required />
+        </div>
+      </div>
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button id="save-btn" type="submit" class="button is-success">Save</button>
+        </div>
+        <div class="control">
+          <button id="cancel-btn" type="button" class="button is-outlined">Cancel</button>
+        </div>
+      </div>
+    </form>
+    <script src="./settingsRenderer.js"></script>
+  </body>
+</html>

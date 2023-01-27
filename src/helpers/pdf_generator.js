@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { PDFDocument } = require('pdf-lib');
+const { PDFDocument, PDFName, PDFNumber } = require('pdf-lib');
 const ExcelJS = require('exceljs');
 
 exports.generatePDFs = async (templatePath, dataFilePath, outputPath) => {
@@ -29,6 +29,7 @@ const fillPdf = async (templateFilePath, outputFilePath, values) => {
     const value = values[index];
     fields[index].setText(value);
   }
+  form.flatten();
   const pdfBytes = await pdf.save();
   fs.writeFileSync(outputFilePath, pdfBytes);
 };

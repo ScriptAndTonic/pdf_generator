@@ -15,7 +15,7 @@ const createWindow = () => {
       preload: path.join(__dirname, 'mainPage/preload.js'),
     },
   });
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   ipcMain.handle('dialog:openDirectory', (event) => openDirectory(event, mainWindow));
   ipcMain.handle('openSettingsPage', (event) => openSettingsPage(event, mainWindow));

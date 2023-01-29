@@ -7,6 +7,7 @@ A simple tool for generating form PDFs in bulk.
 
 > **Warning**
 > <br>Column names *file_name* and *send_email_to* are reserved for functionality and cannot be used as PDF Field Names.<br>
-You must use the *file_name* column to specify a name for the PDF export file.<br>
-Email functionality is not working at this moment, but you can still include the *send_email_to* column.<br>
+>- Column *file_name* is mandatory and is used as the PDF export file name.<br>
+>- Column *send_email_to* is mandatory and is used to send the generated PDF via email.<br>
+
 Please check and start from the [example files](example_files).

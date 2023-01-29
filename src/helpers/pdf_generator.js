@@ -2,24 +2,30 @@ const fs = require('fs');
 const { PDFDocument, PDFName, PDFNumber } = require('pdf-lib');
 const ExcelJS = require('exceljs');
 
-exports.generatePDFs = async (templatePath, dataFilePath, outputPath) => {
-  const inputWorksheet = await readXlsxFile(dataFilePath);
+exports.generatePDFs = async (pdfGenerationInfo) => {
+  const inputWorksheet = await readXlsxFile(pdfGenerationInfo.excelDataFilePath);
   const colNames = inputWorksheet.columns.map((col) => col.key);
-  const pdfFillInfos = [];
-  inputWorksheet.eachRow(async (row, rowNumber) => {
+  const pdfContentsToGenerate = [];
+  inputWorksheet.eachRow((row, _rowNumber) => {
     if (row) {
-      const pdfFillInfo = {};
+      const pdfContent = {};
       colNames.forEach((colName) => {
-        pdfFillInfo[colName] = row.getCell(colName).text;
+        pdfContent[colName] = row.getCell(colName).text;
       });
-      pdfFillInfos.push(pdfFillInfo);
+      pdfContentsToGenerate.push(pdfContent);
     }
   });
 
-  for (let index = 0; index < pdfFillInfos.length; index++) {
-    const pdfFillInfo = pdfFillInfos[index];
-    await fillPdf(templatePath, outputPath, pdfFillInfo);
+  const pdfAttachmentsToSend = [];
+  for (let index = 0; index < pdfContentsToGenerate.length; index++) {
+    const pdfContent = pdfContentsToGenerate[index];
+    const generatedFilePath = await fillPdf(pdfGenerationInfo.pdfTemplateFilePath, pdfGenerationInfo.outputDirectoryPath, pdfContent);
+    if (pdfContent.send_email_to) {
+      pdfAttachmentsToSend.push({ filePath: generatedFilePath, to: pdfContent.send_email_to });
+    }
   }
+
+  return pdfAttachmentsToSend;
 };
 
 const fillPdf = async (templateFilePath, outputPath, pdfFillInfo) => {
@@ -27,12 +33,6 @@ const fillPdf = async (templateFilePath, outputPath, pdfFillInfo) => {
   const templateFile = fs.readFileSync(templateFilePath);
   const pdf = await PDFDocument.load(templateFile);
   const form = pdf.getForm();
-  console.log(
-    `PDF Form fields: ${form
-      .getFields()
-      .map((field) => field.getName())
-      .reduce((accumulator, currentVal) => accumulator + ', ' + currentVal)}`
-  );
   Object.entries(pdfFillInfo).forEach((entry) => {
     const [key, value] = entry;
     switch (key) {
@@ -50,6 +50,7 @@ const fillPdf = async (templateFilePath, outputPath, pdfFillInfo) => {
   form.flatten();
   const pdfBytes = await pdf.save();
   fs.writeFileSync(outputFilePath, pdfBytes);
+  return outputFilePath;
 };
 
 const readXlsxFile = async (filePath) => {

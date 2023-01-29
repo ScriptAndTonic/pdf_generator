@@ -3,19 +3,34 @@ const smtpHostInput = document.querySelector('#smtp-host-input-container input')
 const smtpPortInput = document.querySelector('#smtp-port-input-container input');
 const smtpUserInput = document.querySelector('#smtp-user-input-container input');
 const smtpPassInput = document.querySelector('#smtp-pass-input-container input');
+const emailSubjectInput = document.querySelector('#email-subject-input-container input');
 const cancelBtn = document.querySelector('#cancel-btn');
 
 function collectSettings() {
-  if (smtpHostInput.value !== '' && smtpPortInput.value !== '' && smtpUserInput.value !== '' && smtpPassInput.value !== '') {
-    return { host: smtpHostInput.value, port: smtpPortInput.value, user: smtpUserInput.value, pass: smtpPassInput.value };
-  }
+  return {
+    smtpHost: smtpHostInput.value,
+    smtpPort: smtpPortInput.value,
+    smtpUsername: smtpUserInput.value,
+    smtpPassword: smtpPassInput.value,
+    emailSubject: emailSubjectInput.value,
+  };
 }
 
-form.onsubmit = (e) => {
+window.onload = async () => {
+  const settings = await window.electronAPI.loadSettings();
+  smtpHostInput.value = settings.smtpHost;
+  smtpPortInput.value = settings.smtpPort;
+  smtpUserInput.value = settings.smtpUsername;
+  smtpPassInput.value = settings.smtpPassword;
+  emailSubjectInput.value = settings.emailSubject;
+};
+
+form.onsubmit = async (e) => {
   e.preventDefault();
   const settings = collectSettings();
   if (settings) {
-    console.dir(settings);
+    await window.electronAPI.saveSettings(settings);
+    window.close();
   }
 };
 

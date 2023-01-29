@@ -1,10 +1,7 @@
-// See the Electron documentation for details on how to use preload scripts:
-// https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  generatePDFs: (pdfTemplateFilePath, excelDataFilePath, outputDirectoryPath) =>
-    ipcRenderer.invoke('generate-pdfs', pdfTemplateFilePath, excelDataFilePath, outputDirectoryPath),
+  generatePDFs: (pdfGenerationInfo) => ipcRenderer.invoke('generatePDFs', pdfGenerationInfo),
   selectFolder: (outputDirectoryPath) => ipcRenderer.invoke('dialog:openDirectory', outputDirectoryPath),
   openSettingsPage: () => ipcRenderer.invoke('openSettingsPage'),
 });

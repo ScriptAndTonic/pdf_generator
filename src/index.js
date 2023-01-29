@@ -1,7 +1,11 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
+const Store = require('electron-store');
+const store = new Store();
+const smtpSettingsKeys = ['smtpHost', 'smtpPort', 'smtpUsername', 'smtpPassword', 'emailSubject'];
 
 const pdfGenerator = require('./helpers/pdf_generator');
+const emailer = require('./helpers/emailer');
 
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -15,23 +19,19 @@ const createWindow = () => {
       preload: path.join(__dirname, 'mainPage/preload.js'),
     },
   });
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
-  ipcMain.handle('dialog:openDirectory', (event) => openDirectory(event, mainWindow));
-  ipcMain.handle('openSettingsPage', (event) => openSettingsPage(event, mainWindow));
-  ipcMain.handle('generate-pdfs', generatePDFs);
+  ipcMain.handle('dialog:openDirectory', openDirectory);
+  ipcMain.handle('openSettingsPage', openSettingsPage);
+  ipcMain.handle('generatePDFs', generatePDFs);
+  ipcMain.handle('saveSettings', saveSettings);
+  ipcMain.handle('loadSettings', loadSettings);
 
   mainWindow.loadFile(path.join(__dirname, 'mainPage/index.html'));
 };
 
 app.whenReady().then(() => {
   createWindow();
-});
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
 });
 
 app.on('activate', () => {
@@ -41,12 +41,14 @@ app.on('activate', () => {
 });
 
 // --- CUSTOM LOGIC STARTS HERE ---
-const generatePDFs = async (_event, pdfTemplateFilePath, excelDataFilePath, outputDirectoryPath) => {
+const generatePDFs = async (_event, pdfGenerationInfo) => {
   console.log('Generate PDFs');
-  console.log(`Template Path: ${pdfTemplateFilePath}`);
-  console.log(`Data File Path: ${excelDataFilePath}`);
-  console.log(`Output Directory Path: ${outputDirectoryPath}`);
-  await pdfGenerator.generatePDFs(pdfTemplateFilePath, excelDataFilePath, outputDirectoryPath);
+  console.dir(pdfGenerationInfo);
+  const pdfAttachmentsToSend = await pdfGenerator.generatePDFs(pdfGenerationInfo);
+  if (pdfGenerationInfo.sendEmails) {
+    await emailer.sendMultipleAttachmentEmails(pdfAttachmentsToSend, loadSettings());
+  }
+
   return 'Success';
 };
 
@@ -64,16 +66,49 @@ const openDirectory = async (_event, parentWindow) => {
   }
 };
 
-const openSettingsPage = async (_event, mainWindow) => {
+const openSettingsPage = (_event, mainWindow) => {
   console.log('Open Settings Page');
   const settingsWindow = new BrowserWindow({
     parent: mainWindow,
     width: 400,
-    height: 500,
+    height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'settingsPage/settingsPreload.js'),
     },
   });
-  settingsWindow.webContents.openDevTools();
+  // settingsWindow.webContents.openDevTools();
+
   settingsWindow.loadFile(path.join(__dirname, 'settingsPage/settingsPage.html'));
+};
+
+const saveSettings = (_event, newSettings) => {
+  smtpSettingsKeys.forEach((key) => {
+    store.set(key, newSettings[key]);
+  });
+  console.log('New Settings Saved');
+  console.dir(newSettings);
+};
+
+const loadSettings = (_event) => {
+  let settings = {};
+  if (store.get(smtpSettingsKeys[0])) {
+    smtpSettingsKeys.forEach((key) => {
+      settings[key] = store.get(key);
+    });
+  } else {
+    settings = initSettings();
+  }
+
+  console.log('Loaded Settings');
+  console.dir(settings);
+  return settings;
+};
+
+const initSettings = () => {
+  const emptySettings = {};
+  smtpSettingsKeys.forEach((key) => {
+    emptySettings[key] = '';
+    store.set(key, '');
+  });
+  return emptySettings;
 };

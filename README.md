@@ -2,8 +2,8 @@
 
 A simple tool for generating form PDFs in bulk.
 
- - [Windows](https://github.com/ScriptAndTonic/pdf_generator/releases/latest/download/pdf_generator-1.2.0.Setup.exe)
- - [Mac OS](https://github.com/ScriptAndTonic/pdf_generator/releases/latest/download/pdf_generator-darwin-x64-1.2.0.zip)
+ - [Windows](https://github.com/ScriptAndTonic/pdf_generator/releases/latest/download/pdf_generator-2.0.0.Setup.exe)
+ - [Mac OS](https://github.com/ScriptAndTonic/pdf_generator/releases/latest/download/pdf_generator-darwin-x64-2.0.0.zip)
 
 > **Warning**
 > <br>Column names *file_name* and *send_email_to* are reserved for functionality and cannot be used as PDF Field Names.<br>

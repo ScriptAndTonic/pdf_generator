@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { PDFDocument, PDFName, PDFNumber } = require('pdf-lib');
+const { PDFDocument } = require('pdf-lib');
 const ExcelJS = require('exceljs');
 
 exports.generatePDFs = async (pdfGenerationInfo) => {
@@ -31,8 +31,8 @@ exports.generatePDFs = async (pdfGenerationInfo) => {
 const fillPdf = async (templateFilePath, outputPath, pdfFillInfo) => {
   let outputFilePath = '';
   const templateFile = fs.readFileSync(templateFilePath);
-  const pdf = await PDFDocument.load(templateFile);
-  const form = pdf.getForm();
+  const pdfDoc = await PDFDocument.load(templateFile);
+  const form = pdfDoc.getForm();
   Object.entries(pdfFillInfo).forEach((entry) => {
     const [key, value] = entry;
     switch (key) {
@@ -43,12 +43,13 @@ const fillPdf = async (templateFilePath, outputPath, pdfFillInfo) => {
         console.log(`Send email to ${value}`);
         break;
       default:
-        form.getField(key).setText(value);
+        const field = form.getField(key);
+        field.setText(value);
         break;
     }
   });
   form.flatten();
-  const pdfBytes = await pdf.save();
+  const pdfBytes = await pdfDoc.save();
   fs.writeFileSync(outputFilePath, pdfBytes);
   return outputFilePath;
 };

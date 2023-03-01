@@ -61,6 +61,7 @@ async function generatePDFs(e) {
       submitButton.innerText = 'Failed';
       submitButton.classList.remove('is-info');
       submitButton.classList.add('is-danger');
+      window.alert(result);
     }
     setTimeout(() => {
       submitButton.innerText = 'Submit';

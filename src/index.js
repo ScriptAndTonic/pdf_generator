@@ -44,12 +44,17 @@ app.on('activate', () => {
 const generatePDFs = async (_event, pdfGenerationInfo) => {
   console.log('Generate PDFs');
   console.dir(pdfGenerationInfo);
-  const pdfAttachmentsToSend = await pdfGenerator.generatePDFs(pdfGenerationInfo);
-  if (pdfGenerationInfo.sendEmails) {
-    await emailer.sendMultipleAttachmentEmails(pdfAttachmentsToSend, loadSettings());
-  }
+  try {
+    const pdfAttachmentsToSend = await pdfGenerator.generatePDFs(pdfGenerationInfo);
+    if (pdfGenerationInfo.sendEmails) {
+      await emailer.sendMultipleAttachmentEmails(pdfAttachmentsToSend, loadSettings());
+    }
 
-  return 'Success';
+    return 'Success';
+  } catch (error) {
+    console.error(error);
+    return error.message;
+  }
 };
 
 const openDirectory = async (_event, parentWindow) => {
